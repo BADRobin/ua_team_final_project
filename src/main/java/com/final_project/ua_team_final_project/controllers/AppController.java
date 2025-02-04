@@ -69,6 +69,8 @@ public class AppController {
             pageDataManager.setAdminModel(model, user);
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
+
+            model.addAttribute("user", user); //
             getAvailableProductsModel(model);
             return "organization/userpage";
         } else {
@@ -79,7 +81,10 @@ public class AppController {
     @PostMapping("/selectedProducts")
     public String selectedProducts(@RequestParam List<Long> selectedProducts,
                                    @RequestParam Map<String, String> quantities,
-                                   Model model) {
+                                   Model model, Principal principal) {
+        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + principal.getName()));
+        model.addAttribute("user", user);
         if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
@@ -87,7 +92,10 @@ public class AppController {
     }
 
     @PostMapping("/confirmOrder")
-    public String confirmOrder(@RequestParam Map<String, String> orderItems) {
+    public String confirmOrder(@RequestParam Map<String, String> orderItems, Principal principal, Model model) {
+        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + principal.getName()));
+        model.addAttribute("user", user);
         try {
             pageDataManager.saveNewOrder(orderItems);
             return "redirect:/";
