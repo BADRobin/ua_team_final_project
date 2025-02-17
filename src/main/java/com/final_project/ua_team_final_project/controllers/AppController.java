@@ -1,6 +1,5 @@
 package com.final_project.ua_team_final_project.controllers;
 
-import com.final_project.ua_team_final_project.dto.OrderDTO;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.models.User;
@@ -9,9 +8,6 @@ import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
@@ -44,12 +40,13 @@ public class AppController {
     @Autowired
     private OrderStatusRepository orderStatusRepository;
 
-
     @GetMapping("/")
     public String index(Principal principal,
                         @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
                         @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
                         @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
+                        @RequestParam(name = "products", required = false) List<Long> products,
+                        @RequestParam(name = "quantities", required = false) List<Integer> quantities,
                         Model model) {
         if (principal == null) {
 
@@ -72,6 +69,7 @@ public class AppController {
                 if (order.equals("userId")) {
                     order = "productCode";
                 }
+
                 pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user);
                 return "organization/userpage";
             }
