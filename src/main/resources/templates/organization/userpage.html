@@ -11,14 +11,17 @@
             height: 100%;
             margin: 0;
         }
+
         .wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
+
         .content {
             flex: 1;
         }
+
         a {
             color: black;
             text-decoration: none;
@@ -83,7 +86,7 @@
             <option value="100" th:selected="${pageSize == 100}">100</option>
         </select>
 
-        <form id="productForm" action="/selectedProducts" method="POST">
+        <form id="productForm">
             <input type="hidden" name="_csrf" th:value="${_csrf.token}">
             <table id="availableProducts">
                 <thead>
@@ -97,15 +100,19 @@
                 </thead>
                 <tbody>
                 <tr th:each="availableProduct : ${availableProducts}">
-                    <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/></td>
+                    <td>
+                        <input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}">
+                    </td>
                     <td th:text="${availableProduct.productCode}"></td>
                     <td th:text="${availableProduct.name}"></td>
                     <td th:text="${availableProduct.description}"></td>
-                    <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
+                    <td>
+                        <input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'" min="1">
+                    </td>
                 </tr>
                 </tbody>
             </table>
-            <button type="submit">Create Order</button>
+            <button type="button" id="createOrderButton">Create Order</button>
         </form>
 
         <div class="pagination-container">
@@ -152,13 +159,123 @@
         refresh(pageNumber);
     }
 
-    function refresh(pageNumber = 1) {
-        const pageSize = document.getElementById('resultsPerPage').value;
-        const order = document.getElementById('sortOptions').value;
-        window.location.href = `/?page=${pageNumber}&page_size=${pageSize}&order=${order}`;
-    }
+    document.getElementById("createOrderButton").addEventListener("click", function (event) {
+        event.preventDefault();
 
+        let currentPageNumber = [[${pageNumber}]];
+        const totalPages = [[${totalPages}]];
 
+        let selectedProductsState = {
+            productIds: [],
+            quantities: {}
+        };
+
+        function initializeFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productIds = urlParams.get('productIds')?.split(',') || [];
+            const quantities = urlParams.get('quantities')?.split(',') || [];
+
+            selectedProductsState.productIds = productIds.filter(id => id !== '');
+
+            productIds.forEach((id, index) => {
+                if (id && quantities[index]) {
+                    selectedProductsState.quantities[id] = parseInt(quantities[index]);
+                }
+            });
+
+            selectedProductsState.productIds.forEach(id => {
+                const checkbox = document.querySelector(`input[name="selectedProducts"][value="${id}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    const quantityInput = document.querySelector(`input[name="quantities[${id}]"]`);
+                    if (quantityInput && selectedProductsState.quantities[id]) {
+                        quantityInput.value = selectedProductsState.quantities[id];
+                    }
+                }
+            });
+        }
+
+        function updateUrlWithState(pageNum, pageSize, order) {
+            const quantities = selectedProductsState.productIds
+                .map(id => selectedProductsState.quantities[id] || 0);
+
+            const urlParams = new URLSearchParams();
+            urlParams.set('page', pageNum);
+            urlParams.set('page_size', pageSize);
+            urlParams.set('order', order);
+
+            if (selectedProductsState.productIds.length > 0) {
+                urlParams.set('productIds', selectedProductsState.productIds.join(','));
+                urlParams.set('quantities', quantities.join(','));
+            }
+
+            window.location.href = `/?${urlParams.toString()}`;
+        }
+
+        function refresh(pageNumber = 1) {
+            const pageSize = document.getElementById('resultsPerPage').value;
+            const order = document.getElementById('sortOptions').value;
+
+            document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
+                const productId = checkbox.value;
+                if (!selectedProductsState.productIds.includes(productId)) {
+                    selectedProductsState.productIds.push(productId);
+                }
+                const quantityInput = document.querySelector(`input[name="quantities[${productId}]"]`);
+                if (quantityInput && quantityInput.value) {
+                    selectedProductsState.quantities[productId] = parseInt(quantityInput.value);
+                }
+            });
+
+            updateUrlWithState(pageNumber, pageSize, order);
+        }
+
+        document.getElementById("createOrderButton").addEventListener("click", function (event) {
+            event.preventDefault();
+
+            document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
+                const productId = checkbox.value;
+                if (!selectedProductsState.productIds.includes(productId)) {
+                    selectedProductsState.productIds.push(productId);
+                }
+                const quantityInput = document.querySelector(`input[name="quantities[${productId}]"]`);
+                if (quantityInput && quantityInput.value) {
+                    selectedProductsState.quantities[productId] = parseInt(quantityInput.value);
+                }
+            });
+
+            if (selectedProductsState.productIds.length === 0) {
+                alert("Please select at least one product.");
+                return;
+            }
+
+            const orderData = {
+                productIds: selectedProductsState.productIds,
+                quantities: selectedProductsState.productIds.map(id => selectedProductsState.quantities[id])
+            };
+
+            fetch("/selectedProducts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('input[name="_csrf"]').value
+                },
+                body: JSON.stringify(orderData)
+            }).then(response => {
+                if (response.ok) {
+                    alert("Order successfully created!");
+                    selectedProductsState = {productIds: [], quantities: {}};
+                    window.location.href = '/?page=1';
+                } else {
+                    alert("Error creating order.");
+                }
+            }).catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong.");
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', initializeFromUrl);
 </script>
 <script src="/js/bootstrap.bundle.js"></script>
 </body>

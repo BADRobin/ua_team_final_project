@@ -1,5 +1,6 @@
 package com.final_project.ua_team_final_project.controllers;
 
+import com.final_project.ua_team_final_project.dto.OrderRequest;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.models.User;
@@ -8,6 +9,7 @@ import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +48,6 @@ public class AppController {
                         @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
                         @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
                         @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
-                        @RequestParam(name = "products", required = false) List<Long> products,
-                        @RequestParam(name = "quantities", required = false) List<Integer> quantities,
                         Model model) {
         if (principal == null) {
 
@@ -106,15 +107,40 @@ public class AppController {
     }
 
     @PostMapping("/selectedProducts")
-    public String selectedProducts(@RequestParam List<Long> selectedProducts,
-                                   @RequestParam Map<String, String> quantities,
+    public String selectedProducts(@RequestBody OrderRequest orderRequest,
                                    Model model,
                                    Principal principal) {
-        if (orderService.setSelectedProductsModel(selectedProducts, quantities, model)) {
-            return "redirect:/";
-        }
+
         model.addAttribute("user", userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName())));
+
+        List<Long> productIds = orderRequest.getProductIds();
+        List<Integer> quantities = orderRequest.getQuantities();
+
+        System.out.println(productIds.size());
+
+        if (productIds.size() != quantities.size()) {
+            throw new IllegalArgumentException("productIds and quantities size mismatch");
+        }
+
+        List<OrderedProduct> orderedProducts = new ArrayList<>();
+
+        for (int i = 0; i < productIds.size(); i++) {
+            AvailableProducts product =  availableProductsRepository.findById(productIds.get(i)).orElseThrow(IllegalArgumentException::new);
+            OrderedProduct orderedProduct = new OrderedProduct();
+            orderedProduct.setOrderedProductId(product.getProductId());
+            orderedProduct.setSupplier(product.getSupplier());
+            orderedProduct.setCategory(product.getCategory());
+            orderedProduct.setProductCode(product.getProductCode());
+            orderedProduct.setName(product.getName());
+            orderedProduct.setItemPrice(product.getPrice());
+            orderedProduct.setAmount(Long.valueOf(quantities.get(i)));
+            orderedProducts.add(orderedProduct);
+
+            System.out.println(orderedProduct);
+        }
+
+        model.addAttribute("orderedProducts", orderedProducts);
         return "organization/editProducts";
     }
 
