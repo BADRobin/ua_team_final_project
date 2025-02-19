@@ -3,6 +3,7 @@ package com.final_project.ua_team_final_project.services;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +23,8 @@ import java.util.Map;
 
 @Component
 @Service
+@RequiredArgsConstructor
 public class OrderService {
-
-    @Autowired
-    private EntityManager entityManager;
 
     private final UserRepository userRepository;
     private final SupplierRepository supplierRepository;
@@ -186,6 +185,10 @@ public class OrderService {
         User user = userRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         return orderRepository.findByDept(user.getDepartment());
+    }
+
+    public List<OrderedProduct> getOrderedProductsForOrders(List<Long> orderIds) {
+        return orderedProductRepository.findByOrderOrderIdIn(orderIds);
     }
 
 }

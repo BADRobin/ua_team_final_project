@@ -91,8 +91,7 @@
     </tr>
     </tbody>
   </table>
-  <button type="submit">Approve Order</button>
-  <button type="button" onclick="reject()">Reject Order</button>
+  <button type="button" onclick="generateCSV()">Generate CSV</button>
 </form>
 
 <div class="pagination-container">
@@ -108,57 +107,47 @@
 </div>
 
 <script>
-  const pageNumber = 0;
-  const totalPages = 0;
+  function generateCSV() {
+    let selectedOrders = [];
+    document.querySelectorAll('input[name="selectedOrders"]:checked').forEach((checkbox) => {
+      selectedOrders.push(checkbox.value);
+    });
 
-  document.getElementById('prevPage').classList.toggle('disabled', pageNumber === 1);
-  document.getElementById('firstPageButton').classList.toggle('disabled', pageNumber === 1);
-  document.getElementById('lastPageButton').classList.toggle('disabled', pageNumber === totalPages);
-  document.getElementById('nextPage').classList.toggle('disabled', pageNumber === totalPages);
+    if (selectedOrders.length === 0) {
+      alert("Please select at least one order!");
+      return;
+    }
+
+    let form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/generateCsv";
+
+    let csrfInput = document.createElement("input");
+    csrfInput.type = "hidden";
+    csrfInput.name = "_csrf";
+    csrfInput.value = document.querySelector('input[name="_csrf"]').value;
+    form.appendChild(csrfInput);
+
+    selectedOrders.forEach(orderId => {
+      let input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "selectedOrders";
+      input.value = orderId;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  }
 
   function reject() {
     let form = document.getElementById('ordersForm');
     form.action = "/rejectOrders";
     form.submit();
   }
-
-  function prevPage() {
-    const pageSize = document.getElementById('resultsPerPage').value;
-    const order = document.getElementById('sortOptions').value;
-
-    window.location.href = `/?page=${pageNumber - 1}&page_size=` + pageSize + `&order=${order}`;
-  }
-
-  function nextPage() {
-    const pageSize = document.getElementById('resultsPerPage').value;
-    const order = document.getElementById('sortOptions').value;
-
-    window.location.href = `/?page=${pageNumber + 1}&page_size=` + pageSize + `&order=${order}`;
-  }
-
-  function refresh() {
-    const pageSize = document.getElementById('resultsPerPage').value;
-    const order = document.getElementById('sortOptions').value;
-
-    window.location.href = `/?page=1&page_size=` + pageSize + `&order=` + order;
-  }
-
-  function lastPage() {
-    const pageSize = document.getElementById('resultsPerPage').value;
-    const order = document.getElementById('sortOptions').value;
-
-    window.location.href = `/?page=` + totalPages + `&page_size=` + pageSize + `&order=` + order;
-  }
-
-  function moveToPage() {
-    const pageSize = document.getElementById('resultsPerPage').value;
-    const order = document.getElementById('sortOptions').value;
-    const moveToPageNumber = document.getElementById('pageNumber').value;
-
-    window.location.href = `/?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
-  }
-
 </script>
+
 <script src="/js/bootstrap.bundle.js"></script>
 </body>
+
 </html>

@@ -13,7 +13,6 @@ public class TruncateService {
 
     @Transactional
     public void truncateAvailableProductsTable() {
-        // Выполняем SQL-запрос TRUNCATE для таблицы available_products
         entityManager.createNativeQuery("TRUNCATE TABLE available_products").executeUpdate();
     }
 }

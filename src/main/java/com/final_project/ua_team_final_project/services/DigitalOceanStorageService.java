@@ -1,27 +1,23 @@
 package com.final_project.ua_team_final_project.services;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DigitalOceanStorageService {
 
     private final S3Client s3Client;
 
     private final String BUCKET_NAME = Dotenv.load().get("DO_BUCKET_NAME");
-
-    public DigitalOceanStorageService(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
 
     public List<String> listCsvFiles() {
         ListObjectsV2Request request = ListObjectsV2Request.builder()
@@ -42,5 +38,20 @@ public class DigitalOceanStorageService {
                 .key(fileName)
                 .build();
         return s3Client.getObject(request);
+    }
+
+    public void uploadFile(String fileName, byte[] fileData) {
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(BUCKET_NAME)
+                    .key(fileName)
+                    .contentType("text/csv")
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(fileData));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

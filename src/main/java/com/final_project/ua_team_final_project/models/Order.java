@@ -19,13 +19,16 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id", nullable = false, updatable = false)
     private Long orderId;
 
     @ManyToOne
     @JoinColumn(name = "dept_id", nullable = false)
     private Department dept;
+
     @Column(name = "total_price")
     private double totalPrice;
+
     private boolean approvedByHead;
     private boolean approvedByFinDept;
 
@@ -34,6 +37,7 @@ public class Order {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private OrderStatus status;
@@ -62,12 +66,12 @@ public class Order {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Order order)) return false;
-        return Double.compare(totalPrice, order.totalPrice) == 0 && approvedByHead == order.approvedByHead && approvedByFinDept == order.approvedByFinDept && Objects.equals(orderId, order.orderId) && Objects.equals(dept, order.dept) && Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt) && Objects.equals(status, order.status) && Objects.equals(orderedProducts, order.orderedProducts);
+        return Double.compare(totalPrice, order.totalPrice) == 0 && approvedByHead == order.approvedByHead && approvedByFinDept == order.approvedByFinDept && Objects.equals(orderId, order.orderId) && Objects.equals(dept, order.dept) && Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt) && Objects.equals(status, order.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, dept, totalPrice, approvedByHead, approvedByFinDept, createdAt, updatedAt, status, orderedProducts);
+        return Objects.hash(orderId, dept, totalPrice, approvedByHead, approvedByFinDept, createdAt, updatedAt, status);
     }
 
     @Override
@@ -81,7 +85,6 @@ public class Order {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", status=" + status +
-                ", orderedProducts=" + orderedProducts +
                 '}';
     }
 }

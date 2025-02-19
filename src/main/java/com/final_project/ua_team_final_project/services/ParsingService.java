@@ -6,6 +6,7 @@ import com.final_project.ua_team_final_project.models.Supplier;
 import com.final_project.ua_team_final_project.repositories.CategoryRepository;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -18,13 +19,10 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class ParsingService {
 
     private final CategoryRepository categoryRepository;
-
-    public ParsingService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     public List<AvailableProducts> parseCsv(InputStream inputStream, Supplier supplier) {
         List<AvailableProducts> products = new ArrayList<>();
