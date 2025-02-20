@@ -2,8 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <title>Edit Order</title>
     <style>
@@ -11,11 +9,13 @@
             height: 100%;
             margin: 0;
         }
+
         .wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
+
         .content {
             flex: 1;
         }
@@ -47,8 +47,8 @@
                            th:value="${orderedProduct.product.name}"/>
                     <td th:text="${orderedProduct.product.productCode}"></td>
                     <td th:text="${orderedProduct.product.name}"></td>
-<!--                    <td><input  type="number" th:name="'orderedProducts[' + ${iterStat.index} + '].amount'"-->
-<!--                               th:value="${orderedProduct.amount}"/></td>-->
+                                        <td><input  type="number" th:name="'orderedProducts[' + ${iterStat.index} + '].amount'"
+                                                   th:value="${orderedProduct.amount}"/></td>
                 </tr>
                 </tbody>
             </table>

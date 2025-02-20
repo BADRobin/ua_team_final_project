@@ -2,8 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Edit Selected Products</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/table.css">
@@ -112,113 +110,112 @@
 
                     <div class="d-flex justify-content-between mt-4">
                         <a href="/" class="btn btn-secondary">Back</a>
-                        <button type="submit" class="btn btn-primary">Confirm Order</button>
+                        <!--                        <button type="submit" class="btn btn-primary">Confirm Order</button>-->
                     </div>
                 </form>
             </div>
-
         </div>
-        <div class="right-sidebar">
-            <button type="submit" id="createOrder" class="order-button">Confirm Order</button>
-            <!--        <button type="button" id="deleteButton" class="delete-button">Delete</button>-->
-            <button type="button" class="button" id="deleteButton">
-                <div class="trash">
-                    <div class="top">
-                        <div class="paper"></div>
-                    </div>
-                    <div class="box"></div>
-                    <div class="check">
-                        <svg viewBox="0 0 8 6">
-                            <polyline points="1 3.4 2.71428571 5 7 1"></polyline>
-                        </svg>
-                    </div>
-                </div>
-                <span>Delete Item</span>
-            </button>
-        </div>
-
     </div>
+    <div class="right-sidebar">
+        <button type="submit" id="createOrder" class="order-button">Confirm Order</button>
+        <!--        <button type="button" id="deleteButton" class="delete-button">Delete</button>-->
+        <button type="button" class="button" id="deleteButton">
+            <div class="trash">
+                <div class="top">
+                    <div class="paper"></div>
+                </div>
+                <div class="box"></div>
+                <div class="check">
+                    <svg viewBox="0 0 8 6">
+                        <polyline points="1 3.4 2.71428571 5 7 1"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <span>Delete Item</span>
+        </button>
+    </div>
+
 </div>
-    <footer class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
+<footer class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
 
-    <script>
-        const productForm = document.querySelector("#productForm");
-        const createOrder = document.querySelector("#createOrder")
+<script>
+    const productForm = document.querySelector("#productForm");
+    const createOrder = document.querySelector("#createOrder")
 
-        createOrder.addEventListener("click", function () {
-            productForm.submit();
-        })
-    </script>
-    <script>
-        document.querySelectorAll('.button').forEach(button => button.addEventListener('click', e => {
-            if (!button.classList.contains('delete')) {
-                button.classList.add('delete');
-                setTimeout(() => button.classList.remove('delete'), 3200);
+    createOrder.addEventListener("click", function () {
+        productForm.submit();
+    })
+</script>
+<script>
+    document.querySelectorAll('.button').forEach(button => button.addEventListener('click', e => {
+        if (!button.classList.contains('delete')) {
+            button.classList.add('delete');
+            setTimeout(() => button.classList.remove('delete'), 3200);
+        }
+        e.preventDefault();
+    }));
+</script>
+<script>
+    const deleteButton = document.getElementById('deleteButton');
+    const orderForm = document.getElementById('orderForm');
+
+    deleteButton.addEventListener('click', () => {
+        const checkboxes = document.querySelectorAll('input[name="selectedForDeletion"]:checked');
+        const rowsToDelete = [];
+
+        checkboxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            rowsToDelete.push(row);
+            const productId = checkbox.value;
+
+
+            const hiddenProductIdInput = row.querySelector(`input[name="selectedProducts"][value="${productId}"]`);
+            const hiddenQuantityInput = row.querySelector(`input[name="quantities"]`);
+
+            if (hiddenProductIdInput) {
+                hiddenProductIdInput.remove();
             }
-            e.preventDefault();
-        }));
-    </script>
-    <script>
-        const deleteButton = document.getElementById('deleteButton');
-        const orderForm = document.getElementById('orderForm');
-
-        deleteButton.addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll('input[name="selectedForDeletion"]:checked');
-            const rowsToDelete = [];
-
-            checkboxes.forEach(checkbox => {
-                const row = checkbox.closest('tr');
-                rowsToDelete.push(row);
-                const productId = checkbox.value; // Get product ID to remove from form
-
-                // Remove hidden input fields for the deleted product
-                const hiddenProductIdInput = row.querySelector(`input[name="selectedProducts"][value="${productId}"]`);
-                const hiddenQuantityInput = row.querySelector(`input[name="quantities"]`);
-
-                if (hiddenProductIdInput) {
-                    hiddenProductIdInput.remove();
-                }
-                if (hiddenQuantityInput) {
-                    hiddenQuantityInput.remove();
-                }
-
-            });
-
-            rowsToDelete.forEach(row => row.remove());
-
-        });
-
-        orderForm.addEventListener('submit', (event) => {
-            //Before submit, check if any products are left. If not, prevent submission and show an alert.
-            const productInputs = orderForm.querySelectorAll('input[name="selectedProducts"]');
-            if (productInputs.length === 0) {
-                event.preventDefault(); // Prevent form submission
-                alert("No products selected. Please select products to order.");
+            if (hiddenQuantityInput) {
+                hiddenQuantityInput.remove();
             }
-        });
-    </script>
-    <script src="/js/bootstrap.bundle.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll("input[name='quantities']").forEach(function (input) {
-                input.addEventListener("input", function () {
-                    let row = this.closest("tr");
-                    let priceText = row.querySelector("td:nth-child(3)").textContent.trim();
-                    let price = parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
-                    let quantity = parseInt(this.value) || 1;
-                    let totalCell = row.querySelector("td:last-child");
 
-                    if (!isNaN(price) && quantity >= 0) {
-                        let total = (price * quantity).toFixed(2);
-                        totalCell.textContent = new Intl.NumberFormat('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        }).format(total);
-                    }
-                });
+        });
+
+        rowsToDelete.forEach(row => row.remove());
+
+    });
+
+    orderForm.addEventListener('submit', (event) => {
+
+        const productInputs = orderForm.querySelectorAll('input[name="selectedProducts"]');
+        if (productInputs.length === 0) {
+            event.preventDefault(); // Prevent form submission
+            alert("No products selected. Please select products to order.");
+        }
+    });
+</script>
+<script src="/js/bootstrap.bundle.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input[name='quantities']").forEach(function (input) {
+            input.addEventListener("input", function () {
+                let row = this.closest("tr");
+                let priceText = row.querySelector("td:nth-child(3)").textContent.trim();
+                let price = parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
+                let quantity = parseInt(this.value) || 1;
+                let totalCell = row.querySelector("td:last-child");
+
+                if (!isNaN(price) && quantity >= 0) {
+                    let total = (price * quantity).toFixed(2);
+                    totalCell.textContent = new Intl.NumberFormat('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(total);
+                }
             });
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>

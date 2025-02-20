@@ -144,6 +144,15 @@ public class AppController {
 
     }
 
+    @GetMapping("/editProducts")
+    public String editProducts(Model model) {
+        OrderedProduct orderedProduct = new OrderedProduct();
+        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
+        orderedProduct.setAmount(orderedProduct.getAmount());
+        model.addAttribute("orderedProduct", orderedProduct);
+        return "organization/editProducts";
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -161,7 +170,6 @@ public class AppController {
         pageDataManager.setEditUserModel(id, model, user);
         return "editUser";
     }
-
 
 
     @PostMapping("/edituser")
@@ -242,7 +250,7 @@ public class AppController {
     @GetMapping("/addUser")
     public String addUser(Model model, Principal principal) {
         User user = userRepository.findByLogin(principal.getName()).orElseThrow(() ->
-            new UsernameNotFoundException("User not found: " + principal.getName()));
+                new UsernameNotFoundException("User not found: " + principal.getName()));
         pageDataManager.setNewUserModel(model, user);
         return "/organization/addUser";
     }
