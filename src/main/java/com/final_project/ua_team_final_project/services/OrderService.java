@@ -120,35 +120,25 @@ public class OrderService {
 
     }
 
-    public boolean setSelectedProductsModel(List<Long> selectedProducts, Map<String, String> quantities, Model model) {
-        if (selectedProducts == null || selectedProducts.isEmpty()) {
-            return true;
+    public void setSelectedProductsModel(Map<Long, Integer> products, Model model) {
+
+        List<OrderedProduct>  orderedProductList = new ArrayList<>();
+
+        for (Map.Entry<Long, Integer> entry : products.entrySet()) {
+            AvailableProducts product = availableProductsRepository.findById(entry.getKey()).get();
+            OrderedProduct orderedProduct = new OrderedProduct();
+            orderedProduct.setOrderedProductId(entry.getKey());
+            orderedProduct.setName(product.getName());
+            orderedProduct.setProductCode(product.getProductCode());
+            orderedProduct.setItemPrice(product.getPrice());
+            orderedProduct.setCategory(product.getCategory());
+            orderedProduct.setSupplier(product.getSupplier());
+            orderedProduct.setAmount(Long.valueOf(entry.getValue()));
+
+            orderedProductList.add(orderedProduct);
         }
 
-        List<OrderedProduct> orderedProducts = new ArrayList<>();
-
-        for (Long productId : selectedProducts) {
-            String quantityStr = quantities.get("quantities[" + productId + "]");
-            if (quantityStr != null && !quantityStr.isEmpty()) {
-                AvailableProducts product = availableProductsRepository.findById(productId)
-                        .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
-
-                OrderedProduct orderedProduct = new OrderedProduct();
-                orderedProduct.setOrderedProductId(product.getProductId());
-                orderedProduct.setProductCode(product.getProductCode());
-                orderedProduct.setName(product.getName());
-                orderedProduct.setItemPrice(product.getPrice());
-                orderedProduct.setAmount((long) Integer.parseInt(quantityStr));
-                orderedProducts.add(orderedProduct);
-            }
-        }
-
-        if (orderedProducts.isEmpty()) {
-            return true;
-        }
-
-        model.addAttribute("orderedProducts", orderedProducts);
-        return false;
+        model.addAttribute("orderedProducts", orderedProductList);
     }
 
     public void setHeadOfDepModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {

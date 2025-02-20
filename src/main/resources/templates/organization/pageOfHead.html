@@ -108,13 +108,13 @@
 
         <label for="sortOptions">Sort by:</label>
         <select id="sortOptions" onchange="refresh()">
-            <option value="scales" th:selected="${order == 'scales'}">Scaled</option>
-            <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
-            <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
-            <option value="productCode" th:selected="${order == 'productCode: ASC'}">Product Code</option>
-            <option value="productCode_desc" th:selected="${order == 'productCode: DESC'}">Product Code DESC</option>
-            <option value="inputNumbers" th:selected="${order == 'inputNumbers: ASC'}">Amount</option>
-            <option value="inputNumbers_desc" th:selected="${order == 'inputNumbers: DESC'}">Amount DESC</option>
+            <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
+            <option value="status" th:selected="${order == 'status: ASC'}">Status</option>
+            <option value="status_desc" th:selected="${order == 'status: DESC'}">Status DESC</option>
+            <option value="createdAt" th:selected="${order == 'createdAt: ASC'}">Created at</option>
+            <option value="createdAt" th:selected="${order == 'createdAt: DESC'}">Created at DESC</option>
+            <option value="user" th:selected="${order == 'user: ASC'}">Author's name</option>
+            <option value="user_desc" th:selected="${order == 'user: DESC'}">Author's name DESC</option>
         </select>
 
         <label for="resultsPerPage">Results per page:</label>

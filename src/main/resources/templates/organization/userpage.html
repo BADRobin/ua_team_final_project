@@ -11,14 +11,32 @@
         html, body {
             height: 100%;
             margin: 0;
+
+        }
+
+        .wrapper {
             display: flex;
             flex-direction: column;
         }
         .wrapper {
             display: flex;
+
+
+        .content {
             flex: 1;
             overflow: hidden;
         }
+
+        a {
+            color: black;
+            text-decoration: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
         th, td {
             padding: 6px;
             text-align: left;
@@ -149,9 +167,7 @@
         </div>
         <div class="content">
 
-
             <h1>List of products</h1>
-
 
             <form id="productForm" action="/selectedProducts" method="POST">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}">
@@ -167,18 +183,16 @@
                     </thead>
                     <tbody>
                     <tr th:each="availableProduct : ${availableProducts}">
-                        <td id="check"><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/>
-                        </td>
-                        <td th:text="${availableProduct.productCode}"></td>
-                        <td th:text="${availableProduct.name}"></td>
-                        <td th:text="${availableProduct.description}"></td>
-                        <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
-                    </tr>
+                    <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/></td>
+                    <td th:text="${availableProduct.productCode}"></td>
+                    <td th:text="${availableProduct.name}"></td>
+                    <td th:text="${availableProduct.description}"></td>
+                    <td><input type="number" min="1" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
+                </tr>
                     </tbody>
                 </table>
 
             </form>
-
 
         </div>
         <div class="pagination-container">
@@ -209,6 +223,10 @@
 <script>
     let currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
+    let selectedProductsState = {
+        productIds: [],
+        quantities: {}
+    };
 
 
     document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
@@ -237,13 +255,120 @@
         refresh(pageNumber);
     }
 
+    function initializeFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productIds = urlParams.get('productIds')?.split(',') || [];
+        const quantities = urlParams.get('quantities')?.split(',') || [];
+
+        selectedProductsState.productIds = productIds.filter(id => id !== '');
+
+        productIds.forEach((id, index) => {
+            if (id && quantities[index]) {
+                selectedProductsState.quantities[id] = parseInt(quantities[index]);
+            }
+        });
+
+        selectedProductsState.productIds.forEach(id => {
+            const checkbox = document.querySelector(`input[name="selectedProducts"][value="${id}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                const quantityInput = document.querySelector(`input[name="quantities[${id}]"]`);
+                if (quantityInput && selectedProductsState.quantities[id]) {
+                    quantityInput.value = selectedProductsState.quantities[id];
+                }
+            }
+        });
+    }
+
     function refresh(pageNumber = 1) {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
-        window.location.href = `/?page=${pageNumber}&page_size=${pageSize}&order=${order}`;
+
+        document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
+            const productId = checkbox.value;
+            if (!selectedProductsState.productIds.includes(productId)) {
+                selectedProductsState.productIds.push(productId);
+            }
+            const quantityInput = document.querySelector(`input[name="quantities[${productId}]"]`);
+            if (quantityInput && quantityInput.value) {
+                selectedProductsState.quantities[productId] = parseInt(quantityInput.value);
+            }
+        });
+
+        updateUrlWithState(pageNumber, pageSize, order);
     }
 
+    function updateUrlWithState(pageNum, pageSize, order) {
+        const quantities = selectedProductsState.productIds
+            .map(id => selectedProductsState.quantities[id] || 0);
 
+        const urlParams = new URLSearchParams();
+        urlParams.set('page', pageNum);
+        urlParams.set('page_size', pageSize);
+        urlParams.set('order', order);
+
+        if (selectedProductsState.productIds.length > 0) {
+            urlParams.set('productIds', selectedProductsState.productIds.join(','));
+            urlParams.set('quantities', quantities.join(','));
+        }
+
+        window.location.href = `/?${urlParams.toString()}`;
+    }
+
+    document.getElementById("createOrderButton").addEventListener("click", function(event) {
+        event.preventDefault();
+
+        document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
+            const productId = checkbox.value;
+            if (!selectedProductsState.productIds.includes(productId)) {
+                selectedProductsState.productIds.push(productId);
+            }
+            const quantityInput = document.querySelector(`input[name="quantities[${productId}]"]`);
+            if (quantityInput && quantityInput.value) {
+                selectedProductsState.quantities[productId] = parseInt(quantityInput.value);
+            }
+        });
+
+        if (selectedProductsState.productIds.length === 0) {
+            alert("Please select at least one product.");
+            return;
+        }
+
+        const orderData = {
+            productIds: selectedProductsState.productIds,
+            quantities: selectedProductsState.productIds.map(id => selectedProductsState.quantities[id])
+        };
+
+        fetch("/selectedProducts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('input[name="_csrf"]').value
+            },
+            body: JSON.stringify(orderData)
+        })
+            .then(response => response.text())
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong.");
+            });
+    });
+        document.addEventListener('DOMContentLoaded', initializeFromUrl);
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input[name='selectedProducts']").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                let quantityInput = this.closest("tr").querySelector("input[type='number']");
+                if (this.checked && !quantityInput.value) {
+                    quantityInput.value = 1;
+                }
+            });
+        });
+    });
 </script>
 <script src="/js/bootstrap.bundle.js"></script>
 </body>

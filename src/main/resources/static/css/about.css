@@ -70,7 +70,7 @@
 }
 
 .col {
-    width: calc(25% - 2rem);
+    width: calc(28% - 2rem);
     margin: 1rem;
     cursor: pointer;
     transition: transform 1.5s ease-in-out;
@@ -88,7 +88,7 @@
     display: none;
     position: absolute;
     margin-left: 10px;
-    height: 300px;
+    height: 490px;
     width: calc(100% - 200px);
     max-width: 1200px;
     border: 1px solid #ccc;
@@ -170,7 +170,7 @@
     content: '';
     display: block;
     opacity: .6;
-    background-color: #000;
+    background-color: transparent;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     border-radius: 10px;
@@ -178,6 +178,7 @@
 
 .container:hover .front,
 .container:hover .back {
+
     -webkit-transition: -webkit-transform .7s cubic-bezier(0.4, 0.2, 0.2, 1);
     transition: -webkit-transform .7s cubic-bezier(0.4, 0.2, 0.2, 1);
     -o-transition: transform .7s cubic-bezier(0.4, 0.2, 0.2, 1);
@@ -224,6 +225,8 @@
 }
 
 .container .back {
+    height: 500px;
+    width: 500px;
     -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
     -webkit-transform-style: preserve-3d;
@@ -231,6 +234,8 @@
 }
 
 .container .front {
+    height: 500px;
+    width: 500px;
     -webkit-transform: rotateY(0deg);
     transform: rotateY(0deg);
     -webkit-transform-style: preserve-3d;
@@ -275,7 +280,9 @@
     font-family: 'Montserrat';
     font-weight: 300;
 }
-
+.columns-2 {
+    column-count: 2;
+}
 @media screen and (max-width: 64rem) {
     .col {
         width: calc(33.333333% - 2rem);

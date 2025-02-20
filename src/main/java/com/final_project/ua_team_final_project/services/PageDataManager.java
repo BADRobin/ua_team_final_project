@@ -26,12 +26,14 @@ public class PageDataManager {
 
     public PageDataManager(UserRepository userRepository, DepartmentRepository departmentRepository,
                            RoleRepository roleRepository, OrderRepository orderRepository, OrderStatusRepository orderStatusRepository, AvailableProductsRepository availableProductsRepository) {
+
         this.roleRepository = roleRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.orderStatusRepository = orderStatusRepository;
         this.availableProductsRepository = availableProductsRepository;
+
     }
 
     public void setAdminModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
@@ -61,7 +63,6 @@ public class PageDataManager {
             model.addAttribute("order", sort.toString());
         }
     }
-
 
     public void setEditUserModel(Long id, Model model, User user) {
         model.addAttribute("user", user);
@@ -132,5 +133,32 @@ public class PageDataManager {
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("roles", roleRepository.findAll());
 
+    }
+
+    public void getAvailableProductsModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
+
+        int pageNumber = urlPageNumber - 1;
+
+        Sort.Direction direction = Sort.Direction.ASC;
+
+        if (order.endsWith("desc")) {
+            direction = Sort.Direction.DESC;
+            order = order.substring(0, order.length() - 5);
+        }
+        Sort sort = Sort.by(direction, order);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<AvailableProducts> page = null;
+        try {
+            page = availableProductsRepository.findAll(pageable);
+        } catch (PropertyReferenceException e) {
+            getAvailableProductsModel(model, 1, 10, "productCode", user);
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("pageNumber", urlPageNumber);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("order", sort.toString());
+        model.addAttribute("availableProducts", page.getContent());
     }
 }

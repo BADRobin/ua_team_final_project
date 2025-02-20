@@ -4,23 +4,65 @@
     <meta charset="UTF-8">
     <title>Admin page</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/table.css">
     <style>
         html, body {
             height: 100%;
             margin: 0;
-        }
-        .wrapper {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
+
+        .wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
         .content {
             flex: 1;
+        }
+
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #f1f1f1;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #f1f1f1;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .right-sidebar {
+            width: 200px;
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100vh;
         }
 
         a {
             color: black;
             text-decoration: none;
+            cursor: pointer;
         }
 
         table {
@@ -38,21 +80,26 @@
             cursor: pointer;
         }
 
-        .disabled {
-            color: #ccc;
-            pointer-events: none;
-        }
-
         #pageNumber {
             width: 50px;
         }
-
         .pagination-container {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
+        .pagination-container {
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
         .page-form {
             display: flex;
             align-items: center;
@@ -60,61 +107,71 @@
     </style>
 </head>
 <body>
+<header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="wrapper">
-    <div class="content">
-        <header th:replace="~{fragments/fragments :: top}"></header>
-        <h1>List of users</h1>
 
-        <label for="sortOptions">Sort by:</label>
-        <select id="sortOptions" onchange="refresh()">
-            <option value="userId" th:selected="${order == 'userId'}">ID</option>
-            <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
-            <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
-            <option value="login" th:selected="${order == 'login: ASC'}">Login</option>
-            <option value="login_desc" th:selected="${order == 'login: ASC'}">Login DESC</option>
-            <option value="role" th:selected="${order == 'role: ASC'}">Role</option>
-            <option value="role_desc" th:selected="${order == 'role: DESC'}">Role DESC</option>
-            <option value="hiring_date" th:selected="${order == 'createdAt: ASC'}">Hiring Date</option>
-            <option value="hiring_date_desc" th:selected="${order == 'createdAt: DESC'}">Hiring Date DESC</option>
-        </select>
+    <div class="content-container">
+        <div class="content">
 
-        <label for="resultsPerPage">Results per page:</label>
-        <select id="resultsPerPage" onchange="refresh()">
-            <option value="10" th:selected="${pageSize == 10}">10</option>
-            <option value="25" th:selected="${pageSize == 25}">25</option>
-            <option value="50" th:selected="${pageSize == 50}">50</option>
-            <option value="100" th:selected="${pageSize == 100}">100</option>
-        </select>
+            <h1>List of users</h1>
 
-        <table id="usersTable">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Role</th>
-                <th>Login</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Hired at</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getUserId()}"></a></td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getName()}"></a></td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}"
-                       th:text="${user.getDepartment().getName()}"></a></td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getRole().getName()}"></a>
-                </td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getLogin()}"></a></td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getPhone()}"></a></td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getEmail()}"></a></td>
-                <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getCreatedAt()}"></a></td>
-            </tr>
-            </tbody>
-        </table>
+            <label for="sortOptions">Sort by:</label>
+            <select id="sortOptions" onchange="refresh()">
+                <option value="userId" th:selected="${order == 'userId'}">ID</option>
+                <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
+                <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
+                <option value="login" th:selected="${order == 'login: ASC'}">Login</option>
+                <option value="login_desc" th:selected="${order == 'login: ASC'}">Login DESC</option>
+                <option value="role" th:selected="${order == 'role: ASC'}">Role</option>
+                <option value="role_desc" th:selected="${order == 'role: DESC'}">Role DESC</option>
+                <option value="hiring_date" th:selected="${order == 'createdAt: ASC'}">Hiring Date</option>
+                <option value="hiring_date_desc" th:selected="${order == 'createdAt: DESC'}">Hiring Date DESC</option>
+            </select>
 
+            <label for="resultsPerPage">Results per page:</label>
+            <select id="resultsPerPage" onchange="refresh()">
+                <option value="10" th:selected="${pageSize == 10}">10</option>
+                <option value="25" th:selected="${pageSize == 25}">25</option>
+                <option value="50" th:selected="${pageSize == 50}">50</option>
+                <option value="100" th:selected="${pageSize == 100}">100</option>
+            </select>
+
+            <table id="usersTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Login</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Hired at</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getUserId()}"></a></td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getName()}"></a></td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}"
+                           th:text="${user.getDepartment().getName()}"></a></td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}"
+                           th:text="${user.getRole().getName()}"></a>
+                    </td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getLogin()}"></a></td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getPhone()}"></a></td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getEmail()}"></a></td>
+                    <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getCreatedAt()}"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
+
+
+
+        </div>
         <div class="pagination-container">
             <button id="firstPageButton" onclick="refresh()">First Page</button>
             <button id="prevPage" onclick="prevPage()">Previous</button>
@@ -126,22 +183,21 @@
             <button id="nextPage" onclick="nextPage()">Next</button>
             <button id="lastPageButton" onclick="lastPage()">Last Page</button>
         </div>
-
+    </div>
+    <div class="right-sidebar">
         <button id="updatePriceList"
-                style="margin-top: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
+                style="margin-bottom: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
             Update Price List
         </button>
         <form action="/addUser">
             <button id="addUser"
-                    style="margin-top: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
+                    style="margin-bottom: 200px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
                 Add new user
             </button>
         </form>
-
     </div>
-
-    <footer th:replace="~{fragments/fragments :: bottom}"></footer>
 </div>
+<footer  class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
 <script>
     const pageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
