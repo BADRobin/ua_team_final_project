@@ -22,7 +22,7 @@ public class PageDataManager {
     private final RoleRepository roleRepository;
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
-    private AvailableProductsRepository availableProductsRepository;
+    private final AvailableProductsRepository availableProductsRepository;
 
     public PageDataManager(UserRepository userRepository, DepartmentRepository departmentRepository,
                            RoleRepository roleRepository, OrderRepository orderRepository, OrderStatusRepository orderStatusRepository, AvailableProductsRepository availableProductsRepository) {

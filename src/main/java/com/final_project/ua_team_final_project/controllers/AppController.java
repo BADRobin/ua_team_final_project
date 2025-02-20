@@ -1,6 +1,6 @@
 package com.final_project.ua_team_final_project.controllers;
 
-import com.final_project.ua_team_final_project.dto.OrderDTO;
+
 import com.final_project.ua_team_final_project.dto.OrderRequest;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
@@ -10,9 +10,6 @@ import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;

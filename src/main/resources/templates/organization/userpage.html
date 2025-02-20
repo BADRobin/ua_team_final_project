@@ -11,27 +11,28 @@
         html, body {
             height: 100%;
             margin: 0;
-
-        }
-
-        .wrapper {
             display: flex;
             flex-direction: column;
         }
 
-        .content {
+        .wrapper {
+            display: flex;
             flex: 1;
             overflow: hidden;
+        }
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
         }
 
         a {
             color: black;
             text-decoration: none;
+            cursor: pointer;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        th {
+            cursor: pointer;
         }
 
         th, td {
@@ -39,16 +40,6 @@
             text-align: left;
             border: 1px solid #ddd;
         }
-        a {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        th {
-            cursor: pointer;
-        }
-
         #pageNumber {
             width: 50px;
         }
@@ -75,6 +66,7 @@
             z-index: 10;
             border-bottom: 1px solid #ddd;
         }
+
         .pagination-container {
             position: sticky;
             bottom: 0;
@@ -82,6 +74,7 @@
             padding: 10px;
             border-top: 1px solid #ddd;
         }
+
         .sidebar {
             width: 200px;
             padding: 20px;
@@ -90,11 +83,13 @@
             flex-direction: column;
             height: 100vh;
         }
+
         .content {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
         }
+
         .right-sidebar {
             width: 200px;
             padding: 20px;
@@ -105,6 +100,7 @@
             justify-content: flex-end;
             height: 100vh;
         }
+
         .order-button {
             margin-bottom: 200px;
         }
@@ -117,6 +113,7 @@
             padding: 10px;
             text-align: center;
         }
+
         .fixed-header {
             position: fixed;
             top: 0;
@@ -125,6 +122,7 @@
             padding: 10px;
             text-align: center;
         }
+
         .content-container {
             flex: 1;
             display: flex;
@@ -180,12 +178,14 @@
                     </thead>
                     <tbody>
                     <tr th:each="availableProduct : ${availableProducts}">
-                    <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/></td>
-                    <td th:text="${availableProduct.productCode}"></td>
-                    <td th:text="${availableProduct.name}"></td>
-                    <td th:text="${availableProduct.description}"></td>
-                    <td><input type="number" min="1" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
-                </tr>
+                        <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/>
+                        </td>
+                        <td th:text="${availableProduct.productCode}"></td>
+                        <td th:text="${availableProduct.name}"></td>
+                        <td th:text="${availableProduct.description}"></td>
+                        <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
 
@@ -312,7 +312,7 @@
         window.location.href = `/?${urlParams.toString()}`;
     }
 
-    document.getElementById("createOrderButton").addEventListener("click", function(event) {
+    document.getElementById("createOrderButton").addEventListener("click", function (event) {
         event.preventDefault();
 
         document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
@@ -355,7 +355,7 @@
                 alert("Something went wrong.");
             });
     });
-        document.addEventListener('DOMContentLoaded', initializeFromUrl);
+    document.addEventListener('DOMContentLoaded', initializeFromUrl);
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll("input[name='selectedProducts']").forEach(function (checkbox) {
             checkbox.addEventListener("change", function () {
