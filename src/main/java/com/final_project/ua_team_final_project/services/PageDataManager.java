@@ -128,6 +128,7 @@ public class PageDataManager {
         model.addAttribute("order", sort.toString());
         model.addAttribute("availableProducts", page.getContent());
     }
+
     public void setNewUserModel(Model model, User user) {
         model.addAttribute("user", user);
         model.addAttribute("departments", departmentRepository.findAll());
@@ -135,30 +136,4 @@ public class PageDataManager {
 
     }
 
-    public void getAvailableProductsModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
-
-        int pageNumber = urlPageNumber - 1;
-
-        Sort.Direction direction = Sort.Direction.ASC;
-
-        if (order.endsWith("desc")) {
-            direction = Sort.Direction.DESC;
-            order = order.substring(0, order.length() - 5);
-        }
-        Sort sort = Sort.by(direction, order);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<AvailableProducts> page = null;
-        try {
-            page = availableProductsRepository.findAll(pageable);
-        } catch (PropertyReferenceException e) {
-            getAvailableProductsModel(model, 1, 10, "productCode", user);
-        }
-
-        model.addAttribute("user", user);
-        model.addAttribute("pageNumber", urlPageNumber);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("order", sort.toString());
-        model.addAttribute("availableProducts", page.getContent());
-    }
 }
