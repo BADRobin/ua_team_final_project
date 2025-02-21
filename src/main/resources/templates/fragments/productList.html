@@ -1,9 +1,11 @@
 <th:block th:fragment="productList">
+    <link rel="stylesheet" th:href="@{/css/table.css}" />
     <tr th:each="availableProduct : ${availableProducts}">
-        <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}" /></td>
+
+        <td id="check"><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/></td>
         <td th:text="${availableProduct.productCode}"></td>
         <td th:text="${availableProduct.name}"></td>
         <td th:text="${availableProduct.description}"></td>
-        <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'" /></td>
+        <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
     </tr>
 </th:block>

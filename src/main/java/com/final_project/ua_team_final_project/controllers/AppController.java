@@ -90,10 +90,7 @@ public class AppController {
                     order = "productCode";
                 }
 
-
                 pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user, categoryObj, supplierObj);
-
-
                 return "organization/userpage";
             }
             case "HEAD" -> {
