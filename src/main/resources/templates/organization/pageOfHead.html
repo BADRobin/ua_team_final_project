@@ -203,8 +203,8 @@
         let form = document.getElementById('ordersForm');
         form.action = "/rejectOrdersByHead";
         setTimeout(() => {
-            // Подтверждаем действия или логика может быть выполнена до отправки формы
-            form.submit();  // теперь форма будет отправлена с задержкой
+
+            form.submit();
         }, 1500);
     }
 
