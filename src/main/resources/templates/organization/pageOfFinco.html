@@ -147,7 +147,7 @@
             <div class="container mt-4">
 
                 <div class="table-header">
-                    <h1><span th:text="${department}"></span> department</h1>
+                    <h1><span th:text="${department.getName()}"></span> department</h1>
 
                     <label for="sortOptions">Sort by:</label>
                     <select id="sortOptions" onchange="refresh()">
@@ -194,7 +194,7 @@
                                 th:onclick="|document.getElementById('user-' + ${order.orderId}).style.display='block'|"
                                 style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
                             <td th:text="${order.totalPrice}"></td>
-                            <td th:text="${order.createdAt}"></td>
+                            <td  th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy | HH:mm')}"></td>
                         </tr>
                         </tbody>
                     </table>
