@@ -5,7 +5,9 @@
     <title>Add new User Page</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/admin.css">
     <script src="/js/flatpickr"></script>
+
 </head>
 <body>
 <header th:replace="~{fragments/fragments :: top}"></header>
@@ -54,13 +56,24 @@
             <td><input type="email" name="email" id="email" class="form-control"></td>
         </tr>
     </table>
+</form>
+<div class="buttons">
     <button type="submit" id="saveBtn" class="btn btn-primary mt-3">Save changes</button>
-</form>
-<form action="/">
-    <button>Cancel</button>
-</form>
+
+    <form action="/">
+        <button class="btn btn-primary mt-3">Cancel</button>
+    </form>
+</div>
 <script>
-    document.getElementById("userForm").addEventListener("submit", function(event) {
+    const userForm = document.querySelector("#userForm");
+    const saveBtn = document.querySelector("#saveBtn")
+
+    saveBtn.addEventListener("click", function () {
+        userForm.submit();
+    })
+</script>
+<script>
+    document.getElementById("userForm").addEventListener("submit", function (event) {
         let isValid = true;
         const inputs = document.querySelectorAll("#userForm input, #userForm select");
 

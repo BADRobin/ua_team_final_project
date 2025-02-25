@@ -1,4 +1,5 @@
 .button {
+    width: 100%;
     --background: #2B3044;
     --background-hover: #1E2235;
     --text: #fff;
@@ -13,7 +14,7 @@
     border: none;
     outline: none;
     background: none;
-    padding: 10px 24px;
+    padding: 12px 24px;
     border-radius: 7px;
     min-width: 142px;
     -webkit-appearance: none;
