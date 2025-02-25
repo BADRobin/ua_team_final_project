@@ -12,10 +12,12 @@
             display: flex;
             flex-direction: column;
         }
+
         .disabled {
             color: #ccc;
             pointer-events: none;
         }
+
         .wrapper {
             display: flex;
             flex: 1;
@@ -59,13 +61,13 @@
             background-color: rgba(0, 0, 0, 0.4);
         }
 
-            .pagination-container {
-                position: sticky;
-                bottom: 0;
-                background: #fff;
-                padding: 10px;
-                border-top: 1px solid #ddd;
-            }
+        .pagination-container {
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
 
         .modal-content {
             background-color: #fefefe;
@@ -192,7 +194,9 @@
                                 style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
                             <td th:text="${order.status.getStatusText()}"></td>
                             <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
-                            <td th:text="${order.user.getName()}"></td>
+                            <td th:text="${order.user.getName()}"
+                                th:onclick="|document.getElementById('user-' + ${order.orderId}).style.display='block'|"
+                                style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
 
                         </tr>
                         </tbody>
@@ -221,6 +225,20 @@
                     </div>
                 </div>
 
+                <div th:each="order : ${orderForDept}" th:id="'user-' + ${order.orderId}" class="modal">
+                    <div class="modal-content">
+
+            <span class="close"
+                  th:onclick="|document.getElementById('user-' + ${order.orderId}).style.display='none'|">&times;</span>
+                        <h2>User Details</h2>
+                        <p><strong>Name: </strong> <span th:text="${order.user.getName()}"></span></p>
+                        <p><strong>Department: </strong> <span th:text="${order.dept.name}"></span></p>
+                        <p><strong>Phone: </strong> <span th:text="${order.user.getPhone()}"></span></p>
+                        <p><strong>Email: </strong> <span th:text="${order.user.getEmail()}"></span></p>
+
+                    </div>
+                </div>
+
 
             </div>
         </div>
@@ -239,10 +257,11 @@
     </div>
 
     <div class="right-sidebar">
-      <form action="/history">
+        <form action="/history">
             <button type="submit" class="order-button" id="orderHistory"
                     style="margin-bottom: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
-                Order History</button>
+                Order History
+            </button>
         </form>
         <button type="submit" id="submit"
                 style="margin-bottom: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">

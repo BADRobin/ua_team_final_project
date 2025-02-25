@@ -190,7 +190,9 @@
                             <td th:text="${order.orderId}"
                                 th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
                                 style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
-                            <td th:text="${order.dept.getName()}"></td>
+                            <td th:text="${order.dept.getName()}"
+                                th:onclick="|document.getElementById('user-' + ${order.orderId}).style.display='block'|"
+                                style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
                             <td th:text="${order.totalPrice}"></td>
                             <td th:text="${order.createdAt}"></td>
                         </tr>
@@ -218,7 +220,24 @@
                         </ul>
                     </div>
                 </div>
+                <div th:each="order : ${orders}" th:id="'user-' + ${order.orderId}" class="modal">
+                    <div class="modal-content">
+                <span class="close"
+                      th:onclick="|document.getElementById('user-' + ${order.orderId}).style.display='none'|">&times;</span>
+                        <h2>Department Details</h2>
+                        <p><strong>Department: </strong> <span th:text="${order.dept.name}"></span></p>
+                        <p><strong>Head of Department:</strong>
+                            <span th:text="${order.user.name}"></span></p>
+                        <p><strong>Phone: </strong>
+                            <span th:text="${order.user.phone}"></span></p>
+                        <p><strong>Email:</strong>
+                            <span th:text="${order.user.email}"></span></p>
+                        <p><strong>Created At:</strong> <span
+                                th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
 
+
+                    </div>
+                </div>
 
             </div>
         </div>

@@ -101,6 +101,9 @@ public class AppController {
                 return "organization/pageOfHead";
             }
             case "FINCO" -> {
+                model.addAttribute("role", user.getRole());
+                model.addAttribute("department", user.getDepartment());
+
                 if (order.equals("userId")) {
                     order = "orderId";
                 }
