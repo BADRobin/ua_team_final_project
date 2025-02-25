@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <title>Order History Page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/table.css">
     <style>
         html, body {
             height: 100%;
             margin: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .wrapper {
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            flex: 1;
+            overflow: hidden;
         }
 
         .content {
@@ -54,7 +57,13 @@
             display: flex;
             align-items: center;
         }
-
+        .pagination-container {
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -101,6 +110,22 @@
             border: 1px solid #ddd;
         }
 
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #f1f1f1;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         .disabled {
             color: #ccc;
             pointer-events: none;
@@ -108,66 +133,72 @@
     </style>
 </head>
 <body>
+<header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="wrapper">
-    <div class="content">
-        <header th:replace="~{fragments/fragments :: top}"></header>
-        <h1><span th:text="${department}"></span> department</h1>
+    <div class="content-container">
+        <div class="content">
+            <div class="container mt-4">
+                <h1><span th:text="${department}"></span> department</h1>
 
-        <label for="sortOptions">Sort by:</label>
-        <select id="sortOptions" onchange="refresh()">
-            <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
-            <option value="status" th:selected="${order == 'status: ASC'}">Status</option>
-            <option value="status_desc" th:selected="${order == 'status: DESC'}">Status DESC</option>
-            <option value="createdAt" th:selected="${order == 'createdAt: ASC'}">Created at</option>
-            <option value="createdAt" th:selected="${order == 'createdAt: DESC'}">Created at DESC</option>
-        </select>
+                <label for="sortOptions">Sort by:</label>
+                <select id="sortOptions" onchange="refresh()">
+                    <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
+                    <option value="status" th:selected="${order == 'status: ASC'}">Status</option>
+                    <option value="status_desc" th:selected="${order == 'status: DESC'}">Status DESC</option>
+                    <option value="createdAt" th:selected="${order == 'createdAt: ASC'}">Created at</option>
+                    <option value="createdAt" th:selected="${order == 'createdAt: DESC'}">Created at DESC</option>
+                </select>
 
-        <label for="resultsPerPage">Results per page:</label>
-        <select id="resultsPerPage" onchange="refresh()">
-            <option value="10" th:selected="${pageSize == 10}">10</option>
-            <option value="25" th:selected="${pageSize == 25}">25</option>
-            <option value="50" th:selected="${pageSize == 50}">50</option>
-            <option value="100" th:selected="${pageSize == 100}">100</option>
-        </select>
+                <label for="resultsPerPage">Results per page:</label>
+                <select id="resultsPerPage" onchange="refresh()">
+                    <option value="10" th:selected="${pageSize == 10}">10</option>
+                    <option value="25" th:selected="${pageSize == 25}">25</option>
+                    <option value="50" th:selected="${pageSize == 50}">50</option>
+                    <option value="100" th:selected="${pageSize == 100}">100</option>
+                </select>
 
-        <table id="availableProducts">
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Status</th>
-                <th>Date of Creation</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${orders}">
-                <td th:text="${order.orderId}"
-                    th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
-                    style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
-                <td th:text="${order.status.getStatusText()}"></td>
-                <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
-            </tr>
-            </tbody>
-        </table>
+                <table id="availableProducts">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Status</th>
+                        <th>Date of Creation</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.orderId}"
+                            th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
+                            style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
+                        <td th:text="${order.status.getStatusText()}"></td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
 
-        <div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
-            <div class="modal-content">
+                <div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
+                    <div class="modal-content">
             <span class="close"
                   th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
-                <h2>Order Details</h2>
-                <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
-                <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
-                <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
-                <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
-                <p><strong>Created At:</strong> <span
-                        th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
-                <h3>Ordered Products</h3>
-                <ul>
-                    <li th:each="product : ${order.orderedProducts}">
-                        <span th:text="${product.name} + ' (' + ${product.amount} + ' pcs)'"></span>
-                    </li>
-                </ul>
+                        <h2>Order Details</h2>
+                        <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+                        <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
+                        <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+                        <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
+                        <p><strong>Created At:</strong> <span
+                                th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+                        <h3>Ordered Products</h3>
+                        <ul>
+                            <li th:each="product : ${order.orderedProducts}">
+                                <span th:text="${product.name} + ' (' + ${product.amount} + ' pcs)'"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </div>
+
 
         <div class="pagination-container">
             <button id="firstPageButton" onclick="refresh()">First Page</button>
@@ -181,12 +212,10 @@
             <button id="lastPageButton" onclick="lastPage()">Last Page</button>
         </div>
     </div>
-    <footer th:replace="~{fragments/fragments :: bottom}"></footer>
-
 </div>
-
+<footer class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
 <script>
-    let currentPageNumber = [[${pageNumber}]];
+    const currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
     console.log(currentPageNumber === 1)
 
