@@ -110,16 +110,53 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
     height: 100vh;
+    justify-content: space-between;
 }
 .checkbox{
     text-align: center;
 }
-.order-button {
-    margin-bottom: 200px;
+
+.order-history, .order-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    background: linear-gradient(135deg, #007BFF, #0056b3);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.order-history:before, .order-button:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.5s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
 }
 
+.order-history:hover::before, .order-button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+.order-history:hover, .order-button:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
+
+.order-history:active, .order-button:active {
+    transform: scale(0.95);
+}
 .fixed-footer {
     position: fixed;
     bottom: 0;
@@ -143,4 +180,48 @@ html, body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+p {
+    margin: 0;
+    padding: 0;
+}
+
+.right-sidebar-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Отступ между кнопками */
+    margin-top: auto; /* Гарантированно прижимает кнопки вниз */
+    padding-bottom: 200px;
+}
+
+
+.clock {
+
+    width: 100%;
+    max-width: 160px;
+    background: #0f3854;
+    background: radial-gradient(ellipse at center,  #add8e6  0%, #1c497e 60%);
+    background-size: 100%;
+    font-family: 'Share Tech Mono', monospace;
+    color: #ffffff;
+    text-align: center;
+
+    color: #daf6ff;
+    text-shadow: 0 0 20px rgba(10, 175, 230, 1),  0 0 20px rgba(10, 175, 230, 0);
+    padding: 15px;
+    box-sizing: border-box;
+
+
+
+    #time {
+        letter-spacing: 0.05em;
+        font-size: 30px;
+        padding: 5px 0;
+    }
+    #date {
+        letter-spacing: 0.1em;
+        font-size: 15px;
+    }
+
 }

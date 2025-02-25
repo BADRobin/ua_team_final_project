@@ -92,10 +92,16 @@
         </div>
     </div>
     <div class="right-sidebar">
-        <button class="order-button" id="createOrder">Create Order</button>
-        <form action="/history">
-            <button type="submit" class="order-button" id="orderHistory">Order History</button>
-        </form>
+        <div class="clock">
+            <p id="date"></p>
+            <p id="time"></p>
+        </div>
+        <div class="right-sidebar-buttons">
+            <form action="/history">
+                <button type="submit" class="order-history" id="orderHistory">Order History</button>
+            </form>
+            <button class="order-button" id="createOrder">Create Order</button>
+        </div>
     </div>
 </div>
 
@@ -291,5 +297,6 @@
 </script>
 
 <script src="/js/bootstrap.bundle.js"></script>
+<script src="/js/clock.js"></script>
 </body>
 </html>
