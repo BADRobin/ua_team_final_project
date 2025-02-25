@@ -217,7 +217,6 @@
 <script>
     const currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
-    console.log(currentPageNumber === 1)
 
     document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
     document.getElementById('firstPageButton').classList.toggle('disabled', currentPageNumber === 1);
@@ -228,28 +227,28 @@
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
 
-        window.location.href = `/?page=${pageNumber - 1}&page_size=` + pageSize + `&order=${order}`;
+        window.location.href = `/history?page=${pageNumber - 1}&page_size=` + pageSize + `&order=${order}`;
     }
 
     function nextPage() {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
 
-        window.location.href = `/?page=${pageNumber + 1}&page_size=` + pageSize + `&order=${order}`;
+        window.location.href = `/history?page=${pageNumber + 1}&page_size=` + pageSize + `&order=${order}`;
     }
 
     function refresh() {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
 
-        window.location.href = `/?page=1&page_size=` + pageSize + `&order=` + order;
+        window.location.href = `/history?page=1&page_size=` + pageSize + `&order=` + order;
     }
 
     function lastPage() {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
 
-        window.location.href = `/?page=` + totalPages + `&page_size=` + pageSize + `&order=` + order;
+        window.location.href = `/history?page=` + totalPages + `&page_size=` + pageSize + `&order=` + order;
     }
 
     function moveToPage() {
@@ -257,7 +256,7 @@
         const order = document.getElementById('sortOptions').value;
         const moveToPageNumber = document.getElementById('pageNumber').value;
 
-        window.location.href = `/?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
+        window.location.href = `/history?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
     }
 
 </script>
