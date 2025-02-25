@@ -15,6 +15,10 @@ table td {
     border: 1px solid #dddddd;
     padding: 5px;
 }
+table td .checkbox{
+    text-align: center;
+}
+
 #check{
     text-align: center;
 }
@@ -32,4 +36,111 @@ th {
     background-color: lightblue;
 
 }
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 
+.disabled {
+    color: #ccc;
+    pointer-events: none;
+}
+
+.wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+#pageNumber {
+    width: 50px;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-form {
+    display: flex;
+    align-items: center;
+}
+
+.table-header {
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #ddd;
+}
+
+.pagination-container {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.sidebar {
+    width: 200px;
+    padding: 20px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.right-sidebar {
+    width: 200px;
+    padding: 20px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100vh;
+}
+.checkbox{
+    text-align: center;
+}
+.order-button {
+    margin-bottom: 200px;
+}
+
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+}
+
+.content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
