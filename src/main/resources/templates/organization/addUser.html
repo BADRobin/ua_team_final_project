@@ -10,7 +10,7 @@
 
 </head>
 <body>
-<header th:replace="~{fragments/fragments :: top}"></header>
+<header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <h1>Edit User page</h1>
 <form action="/createUser" method="post" id="userForm">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}">
