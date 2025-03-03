@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -35,7 +34,6 @@ public class SupplierOrderService {
 
         orderedProducts.forEach((supplierId, products) -> {
 
-            //Long id = supplierOrderRepository.count() + 1;
 
             Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
             if (supplier == null) {
@@ -46,8 +44,7 @@ public class SupplierOrderService {
 
             double price = calculateTotalPrice(products);
 
-            SupplierOrder supplierOrder = new SupplierOrder(supplier, price, LocalDateTime.now(), supplierOrderStatus); // id,
-
+            SupplierOrder supplierOrder = new SupplierOrder(supplier, price, LocalDateTime.now(), supplierOrderStatus);
             List<SupplierOrderProduct> supplierOrderProducts = supplierOrderProductService.processProducts(supplierOrder, products);
 
             orders.put(supplierOrder, supplierOrderProducts);

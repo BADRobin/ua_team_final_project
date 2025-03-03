@@ -87,7 +87,6 @@ public class OrderService {
             System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
 
             OrderedProduct orderedProduct = new OrderedProduct();
-//            orderedProduct.setOrderedProductId(1L);
             orderedProduct.setOrder(order);
             orderedProduct.setName(product.getName());
             orderedProduct.setProductCode(product.getProductCode());
@@ -99,7 +98,6 @@ public class OrderService {
             order.setTotalPrice(order.getTotalPrice() + orderedProduct.getItemPrice());
             System.out.println("Order saved: " + order);
             System.out.println("Order saved: " + orderedProduct);
-//            order.addOrderedProduct(orderedProduct);
             orderedProductList.add(orderedProduct);
             double itemTotal = product.getPrice() * quantity;
 
