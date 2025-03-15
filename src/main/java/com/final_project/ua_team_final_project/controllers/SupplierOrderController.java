@@ -65,7 +65,7 @@ public class SupplierOrderController {
         List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
         supplierOrders.keySet().forEach(order -> supplierOrderStatusService.changeStatusToSent(order.getSupplierOrderId()));
         selectedOrderIds.forEach(orderService::changeStatusToDone);
-        orderEmailSender.sendSupplierOrder("vitalii.shekhovtsov@dci-student.org", files);
+        orderEmailSender.sendSupplierOrder("oleh.bryl@dci-student.org", files);
         redirectAttributes.addFlashAttribute("message", "Orders sent successfully");
         return "redirect:/";
     }
